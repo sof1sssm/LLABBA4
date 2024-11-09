@@ -1,33 +1,33 @@
-name: Deploy Multilingual Site
+name: Deploy Multilingual Site #Рабочий процесс, развёртывание многоязычного сайта
 
-on:
-  release:
-    types: [published]
+on: #Запуск рабочего процесса
+  release: #При публикации новой версии
+    types: [published] 
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+jobs: #Содержание заданий
+  deploy: #Название задания
+    runs-on: ubuntu-latest #Виртуальная машина, на которой выполнятся задание 
+    steps: #Шаги в задании
+    - name: Checkout code #Извлечение кода из репозитория
+      uses: actions/checkout@v4 #Действие которое загружает код репозитория
 
     - name: Create versioned directory
-      run: |
-        VERSION=${{ github.ref_name }}
-        VERSION_DIR="./public/v${VERSION}"
-        mkdir -p "$VERSION_DIR"
+      run: | #Символ для многострочных команд
+        VERSION=${{ github.ref_name }} #Получение имени ссылки Git (ветка), которая вызвала рабочий процесс
+        VERSION_DIR="./public/v${VERSION}" #Создает пуьк директории для версии на основе переменной VERSION
+        mkdir -p "$VERSION_DIR" #Создаёт директорию, указанную в переменной VERSION_DIR/ -p-создание всех необходимых родительских директорий, если их нет
 
         # Список файлов и каталогов для копирования
-        files_to_copy=("en" "ru" "index.html")
+        files_to_copy=("en" "ru" "index.html") 
 
         # Копирование в папку с версией
-        for file in "${files_to_copy[@]}"; do
-          cp -r "./${file}" "$VERSION_DIR/"
-        done
+        for file in "${files_to_copy[@]}"; do #Цикл по каждому файлу #
+          cp -r "./${file}" "$VERSION_DIR/" #копирование файлов и директорий/ r-опция cp если директория то копировать все содержимое 
+        done 
 
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
-        keep_files: true
+      uses: peaceiris/actions-gh-pages@v4 #название действия предназначенного для развертывания статических файлов
+      with: #Параметр для дейсвтия 
+        github_token: ${{ secrets.GITHUB_TOKEN }} 
+        publish_dir: ./public #Ключ который указыват на директорию из которой будут публиковаться файлы/ Директория которая хранит файлы для развёртывания
+        keep_files: true #Сохранение файлов в целевой директории после развертывания 
